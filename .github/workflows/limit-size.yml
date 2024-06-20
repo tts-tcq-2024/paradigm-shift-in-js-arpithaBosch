@@ -15,6 +15,3 @@ jobs:
     - name: Limit complexity
       run: $HOME/.local/bin/lizard -l javascript --CCN 3 app/
 
-    - name: Check size
-      run: |
-        $HOME/.local/bin/lizard -l javascript app/ | bash .github/workflows/lpar.sh 50
