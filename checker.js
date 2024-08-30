@@ -1,14 +1,21 @@
-function batteryIsOk(temperature,  soc,  chargeRate) {
-    if(temperature < 0 || temperature > 45) {
+function batteryIsOk(temperature, soc, chargeRate) {
+    const isTemperatureOk = (temperature >= 0 && temperature <= 45);
+    const isSocOk = (soc >= 20 && soc <= 80);
+    const isChargeRateOk = (chargeRate <= 0.8);
+
+    if (!isTemperatureOk) {
         console.log("Temperature is out of range!");
         return false;
-    } else if(soc < 20 || soc > 80) {
+    }
+    if (!isSocOk) {
         console.log("State of Charge is out of range!");
         return false;
-    } else if(chargeRate > 0.8) {
+    }
+    if (!isChargeRateOk) {
         console.log("Charge Rate is out of range!");
         return false;
     }
+
     return true;
 }
 
