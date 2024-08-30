@@ -4,7 +4,6 @@ function batteryIsOk(temperature, soc, chargeRate) {
         { check: soc < 20 || soc > 80, message: "State of Charge is out of range!" },
         { check: chargeRate > 0.8, message: "Charge Rate is out of range!" }
     ];
-
     for (const condition of conditions) {
         if (condition.check) {
             console.log(condition.message);
@@ -13,7 +12,6 @@ function batteryIsOk(temperature, soc, chargeRate) {
     }
     return true;
 }
-
 function  ExpectTrue(expression) {
     if(!expression) {
         console.log("Expected true, but got false");
