@@ -1,4 +1,3 @@
-// Function to check if a value is within a specified range
 function isInRange(value, min, max, parameterName, reporter) {
     if (value < min) {
         reporter(`${parameterName} is too low!`);
@@ -11,7 +10,6 @@ function isInRange(value, min, max, parameterName, reporter) {
     return true;
 }
 
-// Function to check if a value is within a minimum and maximum value
 function isInRangeWithMin(value, min, max, parameterName, reporter) {
     if (value < min) {
         reporter(`${parameterName} is too low!`);
@@ -24,7 +22,6 @@ function isInRangeWithMin(value, min, max, parameterName, reporter) {
     return true;
 }
 
-// Battery check function utilizing the above helper functions
 function batteryIsOk(temperature, soc, chargeRate, reporter) {
     const temperatureOk = isInRange(temperature, 0, 45, "Temperature", reporter);
     const socOk = isInRange(soc, 20, 80, "State of Charge", reporter);
@@ -33,13 +30,11 @@ function batteryIsOk(temperature, soc, chargeRate, reporter) {
     return temperatureOk && socOk && chargeRateOk;
 }
 
-// Reporter function to log messages
+
 function defaultReporter(message) {
     console.log(message);
 }
 
-// Function to test battery conditions and report results
-// Function to test battery conditions and report results
 function runTests(reporter) {
     const tests = [
        { args: [25, 70, 0.7], expected: true },
@@ -69,7 +64,6 @@ function logTestResult(result, expected, args) {
     console.log("-------------------------------");
 }
 
-// Main function to execute tests
 function main() {
     runTests(defaultReporter);
     console.log("All tests completed.");
