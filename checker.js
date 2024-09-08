@@ -1,34 +1,78 @@
-function batteryIsOk(temperature, soc, chargeRate) {
-    const conditions = [
-        { check: temperature < 0 || temperature > 45, message: "Temperature is out of range!" },
-        { check: soc < 20 || soc > 80, message: "State of Charge is out of range!" },
-        { check: chargeRate > 0.8, message: "Charge Rate is out of range!" }
-    ];
-    for (const condition of conditions) {
-        if (condition.check) {
-            console.log(condition.message);
-            return false;
-        }
+// Function to check if a value is within a specified range
+function isInRange(value, min, max, parameterName, reporter) {
+    if (value < min) {
+        reporter(`${parameterName} is too low!`);
+        return false;
+    }
+    if (value > max) {
+        reporter(`${parameterName} is too high!`);
+        return false;
     }
     return true;
 }
-function  ExpectTrue(expression) {
-    if(!expression) {
-        console.log("Expected true, but got false");
-        
+
+// Function to check if a value is within a minimum and maximum value
+function isInRangeWithMin(value, min, max, parameterName, reporter) {
+    if (value < min) {
+        reporter(`${parameterName} is too low!`);
+        return false;
     }
-}
-function ExpectFalse(expression) {
-    if(expression) {
-        console.log("Expected false, but got true");
-        Environment.Exit(1);
+    if (value > max) {
+        reporter(`${parameterName} is too high!`);
+        return false;
     }
+    return true;
 }
+
+// Battery check function utilizing the above helper functions
+function batteryIsOk(temperature, soc, chargeRate, reporter) {
+    const temperatureOk = isInRange(temperature, 0, 45, "Temperature", reporter);
+    const socOk = isInRange(soc, 20, 80, "State of Charge", reporter);
+    const chargeRateOk = isInRangeWithMin(chargeRate, 0.3, 0.8, "Charge Rate", reporter);
+
+    return temperatureOk && socOk && chargeRateOk;
+}
+
+// Reporter function to log messages
+function defaultReporter(message) {
+    console.log(message);
+}
+
+// Function to test battery conditions and report results
+// Function to test battery conditions and report results
+function runTests(reporter) {
+    const tests = [
+       { args: [25, 70, 0.7], expected: true },
+        { args: [50, 70, 0.7], expected: false },
+        { args: [-5, 70, 0.7], expected: false },
+        { args: [25, 85, 0.7], expected: false },
+        { args: [25, 15, 0.7], expected: false },
+        { args: [25, 70, 0.9], expected: false },
+        { args: [25, 70, 0.2], expected: false }, 
+        { args: [25, 70, 0.3], expected: true},
+        { args: [25, 15, 0.7], expected: false },
+        { args: [50, 88, 0], expected: false },
+        { args: [46, 96, -3], expected: false},
+    ];
+
+    tests.forEach(test => {
+        logTestResult(batteryIsOk(...test.args, reporter), test.expected, test.args);
+    });
+}
+
+function logTestResult(result, expected, args) {
+    if (result !== expected) {
+        console.log(`Test failed for args ${args}. Expected ${expected}, but got ${result}.`);
+    } else {
+        console.log(`Test passed for args ${args}.`);
+    }
+    console.log("-------------------------------");
+}
+
+// Main function to execute tests
 function main() {
-    ExpectTrue(batteryIsOk(25, 70, 0.7));
-    ExpectFalse(batteryIsOk(50, 85, 0.0));
-    console.log("All ok");
-    return 0;
+    runTests(defaultReporter);
+    console.log("All tests completed.");
 }
 
 main();
