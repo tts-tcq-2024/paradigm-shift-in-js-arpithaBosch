@@ -1,44 +1,51 @@
-/**
- * Calculates the warning range based on the tolerance and max value.
- * 
- * @param {number} min - The minimum acceptable value.
- * @param {number} max - The maximum acceptable value.
- * @param {number} tolerance - The tolerance percentage.
- * @returns {Object} An object containing the low and high warning range.
- */
+//Calculates the warning range based on the tolerance and max value.
 function calculateWarningRange(min, max, tolerance) {
     const warningTolerance = tolerance * max;
-    const warningRangeLow = min + warningTolerance;
-    const warningRangeHigh = max - warningTolerance;
-    
-    return { warningRangeLow, warningRangeHigh };
+    return {
+        warningRangeLow: min + warningTolerance,
+        warningRangeHigh: max - warningTolerance,
+    };
 }
 
-/**
- * Checks if a warning condition is met for the given value.
- * 
- * @param {number} value - The value to check.
- * @param {number} min - The minimum acceptable value.
- * @param {number} max - The maximum acceptable value.
- * @param {Object} config - Configuration object for warnings and tolerances.
- * @param {string} parameterName - Name of the parameter for reporting.
- * @returns {Object} Result object containing inRange and warning status.
- */
+//Generates a warning message based on the parameter name and condition.
+function generateWarningMessage(parameterName, condition) {
+    return `${parameterName} Warning: Approaching ${condition}!`;
+}
+
+//Checks if a value is within the discharge warning range.
+function isInDischargeRange(value, min, warningRangeLow) {
+    return value >= min && value <= warningRangeLow;
+}
+
+// Checks if a value is within the charge peak warning range.
+function isInChargePeakRange(value, max, warningRangeHigh) {
+    return value <= max && value >= warningRangeHigh;
+}
+
+//Checks if a warning condition is met for the given value.
 function checkWarning(value, min, max, config, parameterName) {
-    // Check if warning is enabled
     if (!config.enableWarning) {
         return { inRange: true, warning: false, message: '' };
     }
-    // Calculate warning ranges
+
     const { warningRangeLow, warningRangeHigh } = calculateWarningRange(min, max, config.tolerance);
-    // Check if value falls within the warning range
-    if (value >= min && value <= warningRangeLow) {
-        return { inRange: true, warning: true, message: `${parameterName} Warning: Approaching discharge!` };
+
+    if (isInDischargeRange(value, min, warningRangeLow)) {
+        return {
+            inRange: true,
+            warning: true,
+            message: generateWarningMessage(parameterName, 'discharge'),
+        };
     }
-    if (value <= max && value >= warningRangeHigh) {
-        return { inRange: true, warning: true, message: `${parameterName} Warning: Approaching charge-peak!` };
+
+    if (isInChargePeakRange(value, max, warningRangeHigh)) {
+        return {
+            inRange: true,
+            warning: true,
+            message: generateWarningMessage(parameterName, 'charge-peak'),
+        };
     }
     return { inRange: true, warning: false, message: '' };
 }
 
-module.exports = { checkWarning};
+module.exports = { checkWarning };
