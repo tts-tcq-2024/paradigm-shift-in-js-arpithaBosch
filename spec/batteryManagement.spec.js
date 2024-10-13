@@ -1,4 +1,4 @@
-const { batteryIsOk, config, defaultReporter } = require("../index");
+const { batteryIsOk, config, defaultReporter } = require("../main");
 
 // Calculation of tolerance as per given config:
 // Temp: 0,45 - Warning tolerance 2.25 - (0-2.25 and 42.75-45)
