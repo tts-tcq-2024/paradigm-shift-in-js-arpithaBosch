@@ -1,4 +1,4 @@
-const { checkWarning } = require('./warnings');
+const { checkWarning } = require('./batteryWarnings');
 
 //Throws an error if the value is below the minimum.
 function checkMinValue(value, min, parameterName) {
