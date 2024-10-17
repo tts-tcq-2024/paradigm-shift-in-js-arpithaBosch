@@ -12,40 +12,38 @@ function generateWarningMessage(parameterName, condition) {
     return `${parameterName} Warning: Approaching ${condition}!`;
 }
 
-//Checks if a value is within the discharge warning range.
-function isInDischargeRange(value, min, warningRangeLow) {
-    return value >= min && value <= warningRangeLow;
+//General function to check if a value falls within a specified range.
+function isInRange(value, lowerBound, upperBound) {
+  return value >= lowerBound && value <= upperBound;
 }
 
-// Checks if a value is within the charge peak warning range.
-function isInChargePeakRange(value, max, warningRangeHigh) {
-    return value <= max && value >= warningRangeHigh;
+//Determines the condition of the warning based on value and ranges.
+function determineWarningCondition(value, min, max, warningRange) {
+  if (isInRange(value, min, warningRange.warningRangeLow)) {
+    return "discharge";
+  }
+  if (isInRange(value, warningRange.warningRangeHigh, max)) {
+    return "charge-peak";
+  }
+  return null;
 }
 
 //Checks if a warning condition is met for the given value.
 function checkWarning(value, min, max, config, parameterName) {
-    if (!config.enableWarning) {
-        return { inRange: true, warning: false, message: '' };
-    }
+  if (!config.enableWarning) {
+    return { inRange: true, warning: false, message: "" };
+  }
 
-    const { warningRangeLow, warningRangeHigh } = calculateWarningRange(min, max, config.tolerance);
+  const warningRange = calculateWarningRange(min, max, config.tolerance);
+  const condition = determineWarningCondition(value, min, max, warningRange);
 
-    if (isInDischargeRange(value, min, warningRangeLow)) {
-        return {
-            inRange: true,
-            warning: true,
-            message: generateWarningMessage(parameterName, 'discharge'),
-        };
-    }
-
-    if (isInChargePeakRange(value, max, warningRangeHigh)) {
-        return {
-            inRange: true,
-            warning: true,
-            message: generateWarningMessage(parameterName, 'charge-peak'),
-        };
-    }
-    return { inRange: true, warning: false, message: '' };
+  return condition
+    ? {
+        inRange: true,
+        warning: true,
+        message: generateWarningMessage(parameterName, condition),
+      }
+    : { inRange: true, warning: false, message: "" };
 }
 
 module.exports = { checkWarning };
