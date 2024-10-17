@@ -1,37 +1,61 @@
-# paradigm-shift-js
+# paradigm-shift-csharp
 
-Key differences between old and new code:
+# Programming Paradigms
 
-1. Structure and Modularity
-    Old Code:
-      The original code had a single checker.js file handling value checks and test execution.
-      All checks were performed using direct value comparisons without warning mechanisms.
-    New Code:
-      The functionality was modularized across multiple files (warnings.js, batteryManagement.js, main.js).
-      A clear separation of concerns was established: warnings are calculated separately from the range checks, making the code more maintainable and scalable.
+Electric Vehicles have BMS - Battery Management Systems
 
-2. Configuration Flexibility
-    Old Code:
-      No configuration for warnings; all checks were hard-coded.
-    New Code:
-      The new implementation uses a configuration object to toggle warning functionality and set tolerances dynamically, allowing for more flexible and user-defined behavior.
+[Here is an article that helps to understand the need for BMS](https://circuitdigest.com/article/battery-management-system-bms-for-electric-vehicles)
 
-3. Exception Handling
-    Old Code:
-      The original implementation used simple logging for errors.
-    New Code:
-      The new code throws errors when values fall outside of acceptable ranges, providing a more robust error handling approach.
+[Wikipedia gives an idea of the types and topologies](https://en.wikipedia.org/wiki/Battery_management_system)
 
-4. Test Cases
-    Old Code:
-      Basic test cases were included to check if values were within range.
-    New Code:
-      Enhanced test cases validate both value checks and warning scenarios, ensuring comprehensive coverage of potential edge cases.
+[This site gives the optimum Charging-temperature limits](https://batteryuniversity.com/learn/article/charging_at_high_and_low_temperatures)
 
+[This abstract suggests a range for the optimum State of Charge](https://www.sciencedirect.com/science/article/pii/S2352484719310911)
 
-* Experience in writing the new code and was it feasible with exisiitng code:
-1) Writing the new code was a systematic process that involved careful consideration of the existing structure and the desired enhancements. 
-2) Breaking down the functions into distinct funtionalities required thoughtful planning to maintain code readability and efficiency.
-3) The new feature of adding dynamic warnings was feasible given the existing structure of the code. 
-4) The initial approach was straightforward, making it easier to expand functionality without compromising the original intent.
-5) The modular structure allows for future enhancements or modifications without significant rewrites, which enhances the overall maintainability of the codebase.
+[Here is a reference for the maximum charge rate](https://www.electronics-notes.com/articles/electronic_components/battery-technology/li-ion-lithium-ion-charging.php#:~:text=Constant%20current%20charge:%20In%20the%20first%20stage%20of,rate%20of%20a%20maximum%20of%200.8C%20is%20recommended.)
+
+## Possible purpose
+
+- Protect batteries while charging:
+at home, in public place, within vehicle / regenerative braking
+- Estimate life, inventory and supply chains
+
+## The Starting Point
+
+We will explore the charging phase of Li-ion batteries to start with.
+
+## Issues
+
+- The code here has high complexity in a single function.
+- The tests are not complete - they do not cover all the needs of a consumer
+
+## Tasks
+
+1. Reduce the cyclomatic complexity.
+1. Separate pure functions from I/O
+1. Avoid duplication - functions that do nearly the same thing
+1. Complete the tests - cover all conditions.
+1. To take effective action, we need to know
+the abnormal measure and the breach -
+whether high or low. Add this capability.
+
+## The Exploration
+
+How well does our code hold-out in the rapidly evolving EV space?
+Can we add new functionality without disturbing the old?
+
+## The Landscape
+
+- Limits may change based on new research
+- Technology changes due to obsolescence
+- Sensors may be from different vendors with different accuracy
+- Predicting the future requires Astrology!
+
+## Keep it Simple
+
+Shorten the Semantic distance
+
+- Procedural to express sequence
+- Functional to express relation between input and output
+- Object oriented to encapsulate state with actions
+- Apect oriented to capture repeating aspects
