@@ -1,4 +1,4 @@
-const { batteryIsOk, config, defaultReporter } = require("../main");
+const { batteryIsOk, config, defaultReporter } = require("../index");
 
 // Calculation of tolerance as per given config:
 // Temp: 0,45 - Warning tolerance 2.25 - (0-2.25 and 42.75-45)
@@ -37,54 +37,54 @@ describe("Battery Management System Tests", () => {
     expect(mockReporter).toHaveBeenCalledWith("Charge Rate is too high!");
   });
 
-  it("should use defaultReporter and report warning for SOC approaching charge-peak", () => {
+  it("should use mockReporter and report warning for SOC approaching charge-peak", () => {
     // Testing the scenario where the SOC is close to its upper limit,
     // expecting the function to return true and log a warning for approaching charge-peak.
-    const result = batteryIsOk(23, 79, 0.7, config, defaultReporter);
+    const result = batteryIsOk(23, 79, 0.7, config, mockReporter);
     expect(result).toBe(true); // All parameters are in range
-    expect(console.log).toHaveBeenCalledWith(
+    expect(mockReporter).toHaveBeenCalledWith(
       "State of Charge Warning: Approaching charge-peak!"
     );
   });
-
-  it("should log multiple warnings for Temperature, SOC, and charge rate values", () => {
+  
+  it("should log multiple warnings for Temperature, SOC, and charge rate values using mockReporter", () => {
     // Testing the scenario where multiple battery parameters (temperature, SOC, charge rate)
     // are approaching their lower or upper limits, expecting all corresponding warnings to be logged.
-    batteryIsOk(2, 21, 0.78, config, defaultReporter);
-    expect(console.log).toHaveBeenCalledWith(
+    batteryIsOk(2, 21, 0.78, config, mockReporter);
+    expect(mockReporter).toHaveBeenCalledWith(
       "Temperature Warning: Approaching discharge!"
     );
-    expect(console.log).toHaveBeenCalledWith(
+    expect(mockReporter).toHaveBeenCalledWith(
       "State of Charge Warning: Approaching discharge!"
     );
-    expect(console.log).toHaveBeenCalledWith(
+    expect(mockReporter).toHaveBeenCalledWith(
       "Charge Rate Warning: Approaching charge-peak!"
     );
   });
-
-  it("should log warning using defaultReporter when SOC approaches charge-peak", () => {
+  
+  it("should log warning using mockReporter when SOC approaches charge-peak", () => {
     // Testing the scenario where the SOC is very close to its upper limit,
     // expecting a warning for approaching charge-peak to be logged.
-    batteryIsOk(35, 76, 0.5, config, defaultReporter);
-    expect(console.log).toHaveBeenCalledWith(
+    batteryIsOk(35, 76, 0.5, config, mockReporter);
+    expect(mockReporter).toHaveBeenCalledWith(
       "State of Charge Warning: Approaching charge-peak!"
     );
   });
-
-  it("should log warning using defaultReporter for temperature approaching discharge", () => {
+  
+  it("should log warning using mockReporter for temperature approaching discharge", () => {
     // Testing the scenario where the temperature is very low, close to its minimum limit,
     // expecting a warning for approaching discharge to be logged.
-    batteryIsOk(2, 70, 0.5, config, defaultReporter);
-    expect(console.log).toHaveBeenCalledWith(
+    batteryIsOk(2, 70, 0.5, config, mockReporter);
+    expect(mockReporter).toHaveBeenCalledWith(
       "Temperature Warning: Approaching discharge!"
     );
   });
-
-  it("should log warning using defaultReporter for charge rate approaching peak", () => {
+  
+  it("should log warning using mockReporter for charge rate approaching peak", () => {
     // Testing the scenario where the charge rate is close to its maximum limit,
     // expecting a warning for approaching charge-peak to be logged.
-    batteryIsOk(25, 70, 0.76, config, defaultReporter);
-    expect(console.log).toHaveBeenCalledWith(
+    batteryIsOk(25, 70, 0.76, config, mockReporter);
+    expect(mockReporter).toHaveBeenCalledWith(
       "Charge Rate Warning: Approaching charge-peak!"
     );
   });
