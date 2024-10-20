@@ -1,0 +1,164 @@
+# paradigm-shift-js
+
+Key differences between old and new code:
+
+1. Structure and Modularity
+    Old Code:
+      The original code had a single checker.js file handling value checks and test execution.
+      All checks were performed using direct value comparisons without warning mechanisms.
+    New Code:
+      The functionality was modularized across multiple files (warnings.js, batteryManagement.js, main.js).
+      A clear separation of concerns was established: warnings are calculated separately from the range checks, making the code more maintainable and scalable.
+
+2. Configuration Flexibility
+    Old Code:
+      No configuration for warnings; all checks were hard-coded.
+    New Code:
+      The new implementation uses a configuration object to toggle warning functionality and set tolerances dynamically, allowing for more flexible and user-defined behavior.
+
+3. Exception Handling
+    Old Code:
+      The original implementation used simple logging for errors.
+    New Code:
+      The new code throws errors when values fall outside of acceptable ranges, providing a more robust error handling approach.
+
+4. Test Cases
+    Old Code:
+      Basic test cases were included to check if values were within range.
+    New Code:
+      Enhanced test cases validate both value checks and warning scenarios, ensuring comprehensive coverage of potential edge cases.
+
+
+* Experience in writing the new code and was it feasible with existing code:
+1) Writing the new code was a systematic process that involved careful consideration of the existing structure and the desired enhancements. 
+2) Breaking down the functions into distinct functionalities required thoughtful planning to maintain code readability and efficiency.
+3) The new feature of adding dynamic warnings was feasible given the existing structure of the code. 
+4) The initial approach was straightforward, making it easier to expand functionality without compromising the original intent.
+5) The modular structure allows for future enhancements or modifications without significant rewrites, which enhances the overall maintainability of the codebase.
+
+
+Comprehensive Explanation of Battery Management System Code
+
+This code is designed to monitor and validate various parameters related to battery management, such as temperature, state of charge (SOC), and charge rate. 
+It checks whether these parameters are within specified ranges and generates warnings or errors when values approach dangerous limits. 
+The code is modular and built with error handling, allowing for easy extension and customization of warnings and tolerances.
+
+1. warnings.js - Warning System Functions
+This module defines the warning system, which calculates acceptable ranges for various parameters, generates warning messages, and checks whether values fall within a 
+defined "warning" range.
+
+    Functions:
+    1. calculateWarningRange(min, max, tolerance)
+      Purpose: Calculates a warning range for any parameter based on a tolerance value.
+      Parameters:
+      min: The minimum acceptable value.
+      max: The maximum acceptable value.
+      tolerance: A percentage of the maximum value used to create the warning range.
+      Returns: An object with warningRangeLow (the low end of the warning range) and warningRangeHigh (the high end of the warning range).
+    
+    2. generateWarningMessage(parameterName, condition)
+      Purpose: Creates a warning message for the specified parameter and condition (discharge or charge-peak).
+      Parameters:
+      parameterName: The name of the parameter being monitored (e.g., Temperature, SOC).
+      condition: The specific warning condition (either "discharge" or "charge-peak").
+      Returns: A string message in the format: "parameterName Warning: Approaching condition!"
+      
+    3. isInRange(value, lowerBound, upperBound)
+      Purpose: A general utility function to check if a value falls within a specified range.
+      Parameters:
+      value: The value to be checked.
+      lowerBound: The lower bound of the range.
+      upperBound: The upper bound of the range.
+      Returns: true if the value is within the range, false otherwise.
+    
+    4. determineWarningCondition(value, min, max, warningRange)
+      Purpose: Determines whether a given value is approaching a "discharge" or "charge-peak" condition based on calculated warning ranges.
+      Parameters:
+      value: The value to be checked.
+      min: The minimum acceptable value.
+      max: The maximum acceptable value.
+      warningRange: An object containing warningRangeLow and warningRangeHigh.
+      Returns: A string ("discharge" or "charge-peak") if a warning condition is met, otherwise null.
+    
+    5. checkWarning(value, min, max, config, parameterName)
+      Purpose: Checks whether a given value is within the acceptable warning range based on configuration settings.
+      Parameters:
+      value: The value to be checked.
+      min: The minimum acceptable value.
+      max: The maximum acceptable value.
+      config: An object that contains warning configuration such as tolerance and enableWarning.
+      parameterName: The name of the parameter being checked.
+      Returns: An object with:
+      inRange: Whether the value is within an acceptable range.
+      warning: Whether a warning condition is met.
+      message: The generated warning message (if applicable).
+
+2. batteryManagement.js - Battery Management and Validation
+This module handles the validation of battery-related parameters (temperature, state of charge, charge rate) and ensures they are within safe limits. 
+It also generates warnings when necessary.
+
+    Functions:
+    
+    1. checkMinValue(value, min, parameterName)
+      Purpose: Throws an error if a given value is below the minimum threshold.
+      Parameters:
+      value: The value to be checked.
+      min: The minimum allowable value.
+      parameterName: The name of the parameter being validated.
+      Throws: An error if the value is too low.
+    
+    2. checkMaxValue(value, max, parameterName)
+      Purpose: Throws an error if a given value exceeds the maximum threshold.
+      Parameters:
+      value: The value to be checked.
+      max: The maximum allowable value.
+      parameterName: The name of the parameter being validated.
+      Throws: An error if the value is too high.
+    
+    3. checkRange(value, min, max, config, parameterName)
+      Purpose: Combines range checking and warning generation for a specific parameter. 
+      It checks whether a value is within the acceptable range, throws errors if it's too low or too high, and generates warnings if necessary.
+      Parameters:
+      value: The value to be checked.
+      min: The minimum acceptable value.
+      max: The maximum acceptable value.
+      config: Configuration object containing tolerance and enableWarning for that parameter.
+      parameterName: The name of the parameter being checked.
+      Returns:
+      An object containing:
+      inRange: Whether the value is within acceptable limits.
+      warning: Whether a warning condition is met.
+      message: A warning or error message if applicable.
+      Error Handling: If the value is out of bounds (too low or too high), it returns the error message and marks inRange as false.
+      
+    4. batteryIsOk(temperature, soc, chargeRate, config, reporter)
+      Purpose: Checks the three main battery parameters (temperature, state of charge, and charge rate) against their defined ranges and warnings. 
+      It reports any warnings or errors.
+      Parameters:
+      temperature: The temperature value to check (acceptable range: 0 to 45°C).
+      soc: The state of charge value to check (acceptable range: 20% to 80%).
+      chargeRate: The charge rate value to check (acceptable range: 0.3 to 0.8).
+      config: Configuration object that contains tolerance and warning settings for temperature, SOC, and charge rate.
+      reporter: A function responsible for handling any messages (e.g., warnings or errors).
+      Returns:
+      true if all the parameters are within acceptable ranges.
+      false if any parameter is out of range.
+      Flow:
+      -It checks each parameter (temperature, soc, chargeRate) using checkRange().
+      -Reports any messages (warnings or errors) through the reporter function.
+      -Returns whether all parameters are within range.
+
+
+3. index.js - Entry Point and Configuration
+    This file sets up the configuration for battery parameter validation and defines a default reporter for logging warning messages to the console.
+
+    Key Elements:
+
+      1. defaultReporter(message)
+        Purpose: Logs the message to the console. This function can be replaced by any other custom reporting logic.
+        Parameters:
+        message: The message to log (warning or error).
+    2. config
+        Purpose: Contains the configuration for warnings and tolerances for the battery parameters (temperature, SOC, charge rate).
+
+
