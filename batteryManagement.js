@@ -1,31 +1,32 @@
 const { checkWarning } = require('./batteryWarnings');
 
-//Throws an error if the value is below the minimum.
+// Return an error message if the value is below the minimum.
 function checkMinValue(value, min, parameterName) {
-    if (value < min) {
-        throw new Error(`${parameterName} is too low!`);
-    }
+  return value < min ? `${parameterName} is too low!` : null;
 }
 
-//Throws an error if the value exceeds the maximum.
+// Return an error message if the value exceeds the maximum.
 function checkMaxValue(value, max, parameterName) {
-    if (value > max) {
-        throw new Error(`${parameterName} is too high!`);
-    }
+  return value > max ? `${parameterName} is too high!` : null;
 }
 
 /**
  * Checks if the given value is in the specified range and returns an object containing
  * information about the range check, warnings, and possible exception messages.
  **/
+// Check if the value is within the range and return all error messages.
 function checkRange(value, min, max, config, parameterName) {
-    try {
-        checkMinValue(value, min, parameterName);  // Check minimum
-        checkMaxValue(value, max, parameterName);  // Check maximum
-        return checkWarning(value, min, max, config, parameterName);
-    } catch (error) {
-        return { inRange: false, warning: false, message: error.message };
-    }
+  const errors = [
+    checkMinValue(value, min, parameterName),
+    checkMaxValue(value, max, parameterName),
+  ].filter(Boolean); // Filters out null values (i.e., no error)
+
+  if (errors.length) {
+    return { inRange: false, warning: false, message: errors.join(", ") };
+  }
+
+  // Check warnings only if no critical errors
+  return checkWarning(value, min, max, config, parameterName);
 }
 
 // Validates the battery parameters and checks for limits and warnings.
